@@ -168,5 +168,6 @@ int main()
     hash<string> myhash;
     string tes = to_string(myhash(s));
     cout << tes;*/
+
     bank.StartApp();
 }
