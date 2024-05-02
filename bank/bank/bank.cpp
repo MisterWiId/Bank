@@ -56,27 +56,21 @@ private:
     vector<User> users;
     User currentUser;
 
-    void LoadUsers()
-    {
+    void LoadUsers() {
         fstream file;
         file.open("users.dat", ios::in);
-        string data;
-        file >> data;
-        //cout << data << endl;
-        string line;
-        while (getline(file, line))
-        {
-            vector<string> userData = split(line, ":");
-            User user = User(userData[0], split);
-        }
 
+        string line;
+
+        while (getline(file, line)) {
+            vector<string> userData = split(line, ":");
+            User user = User(userData[0], stod(userData[2]), userData[1]);
+            users.push_back(user);
+        }
         file.close();
     }
     void SaveUsers() 
     {
-        fstream file;
-        file.open("users.txt", ios::app);
-
 
     }
     void CreateUsers() 
@@ -98,5 +92,10 @@ public:
 
 int main()
 {
+    Bank bank;
 
+    string s = "Hello";
+    hash<string> myhash;
+    string tes = to_string(myhash(s));
+    cout << tes;
 }
