@@ -50,11 +50,19 @@ public:
     }
 };
 
+enum class AppState {
+    Enter,
+    EnterLogin,
+    EnterPassword,
+    Menu
+};
+
 class Bank 
 {
 private:
     vector<User> users;
     User currentUser;
+    AppState state;
 
     void LoadUsers() {
         fstream file;
@@ -79,23 +87,86 @@ private:
     }
     void Login()
     {
+        
+    }
+    void RenderUI()
+    {
+        // 1. switch + tab
+        // 2. switch(ввести) + enter
+        system("cls");
+        switch (state)
+        {
+        case AppState::Enter:
+            cout << "========== Bank++ ==========" << endl 
+                << "Welcome, deaf user. Choose next stop" << endl
+                << "Enter \ login \ to login to your account" << endl
+                << "Enter \ register \ to register as a new user" << endl
+                << "10 000$ bonus to every new user" << endl;
+            break;
+        case AppState::EnterLogin:
+            cout << "========== Bank++ ==========" << endl
+                << "Enter your login below";
+            break;
+        case AppState::EnterPassword:
+            break;
+        case AppState::Menu:
+            break;
+        default:
+            break;
+        }
+    }
+    void GetUserInput()
+    {
+        string input;
+        cout << "\nYour input: ";
+        getline(cin, input);
 
+        switch (state)
+        {
+        case AppState::Enter:
+            if (input == "login")
+            {
+                state = AppState::EnterLogin;
+            }
+            else if (input == "register")
+            {
+
+            }
+            break;
+        case AppState::EnterLogin:
+            break;
+        case AppState::EnterPassword:
+            break;
+        case AppState::Menu:
+            break;
+        default:
+            break;
+        }
     }
 public:
     Bank() 
     {
+        state = AppState::Enter;
         LoadUsers();
         Login();
     }
-
+    void StartApp()
+    {
+        while (true)
+        {
+            RenderUI();
+            GetUserInput();
+        }
+    }
 };
 
 int main()
 {
     Bank bank;
 
-    string s = "Hello";
+    /*string s = "Hello";
     hash<string> myhash;
     string tes = to_string(myhash(s));
-    cout << tes;
+    cout << tes;*/
+    bank.StartApp();
 }
