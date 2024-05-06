@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <conio.h>
 
 using namespace std;
 
@@ -54,15 +55,20 @@ enum class AppState {
     Enter,
     EnterLogin,
     EnterPassword,
-    Menu
+    Menu,
+    LoginSuccess,
+    LoginFall
 };
 
 class Bank 
 {
 private:
     vector<User> users;
-    User currentUser;
     AppState state;
+
+    User currentUser;
+    string tempLogin;
+    string tempPassword;
 
     void LoadUsers() {
         fstream file;
@@ -85,9 +91,9 @@ private:
     {
 
     }
-    void Login()
+    bool Login()
     {
-        
+        return false;
     }
     void RenderUI()
     {
@@ -108,8 +114,17 @@ private:
                 << "Enter your login below";
             break;
         case AppState::EnterPassword:
+            cout << "========== Bank++ ==========" << endl
+                << "Enter your password below";
             break;
         case AppState::Menu:
+            break;
+        case AppState::LoginFall:
+            cout << "========== Bank++ ==========" << endl
+                << "Wrong login or password" << endl
+                << "Enter any key to back to the login page";
+            break;
+        case AppState::LoginSuccess:
             break;
         default:
             break;
@@ -119,8 +134,28 @@ private:
     {
         string input;
         cout << "\nYour input: ";
-        getline(cin, input);
-
+        if (state == AppState::EnterPassword)
+        {
+            char charecter = ' ';
+            while (charecter != 13)
+            {
+                charecter = _getch();
+                if (charecter >= 33 && charecter <= 126)
+                {
+                    input += charecter;
+                    putchar('*');
+                }  
+                if (charecter == 8 and input.size() >= 1)
+                {
+                    input = input.substr(0, input.size() - 1);
+                    cout << "\b \b";
+                }
+            }
+        }
+        else
+        {
+            getline(cin, input);
+        }  
         switch (state)
         {
         case AppState::Enter:
@@ -134,11 +169,34 @@ private:
             }
             break;
         case AppState::EnterLogin:
+            if (input == "") break;
+            tempLogin = input;
+            state = AppState::EnterPassword;
             break;
         case AppState::EnterPassword:
+            
+            if (input == "") break;
+            
+            tempPassword = input;
+
+            // Проверка пользователя
+            if (Login())
+            {
+                state = AppState::LoginSuccess;
+            }
+            else
+            {
+                state = AppState::LoginFall;
+            }
+
             break;
         case AppState::Menu:
             break;
+        case AppState::LoginFall:
+            break;
+        case AppState::LoginSuccess:
+            break;
+        
         default:
             break;
         }
@@ -152,11 +210,13 @@ public:
     }
     void StartApp()
     {
+        
         while (true)
         {
             RenderUI();
             GetUserInput();
         }
+        
     }
 };
 
