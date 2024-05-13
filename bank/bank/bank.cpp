@@ -33,21 +33,29 @@ vector<string> split(string s, string sep)
 class User 
 {
 private:
-    string name;
+    string login;
     double money;
     string password;
 public:
     User() 
     {
-        name = "";
+        login = "";
         money = 0;
         password = "";
     }
     User(string newName, double newMoney, string newPassword)
     {
-        name = newName;
+        login = newName;
         money = newMoney;
         password = newPassword;
+    }
+    string GetLogin()
+    {
+        return login;
+    }
+    string GetPassword()
+    {
+        return password;
     }
 };
 
@@ -57,7 +65,10 @@ enum class AppState {
     EnterPassword,
     Menu,
     LoginSuccess,
-    LoginFall
+    LoginFall,
+    EnterLoginRegister,
+    EnterPasswordRegister,
+    EnterPasswordConfirm
 };
 
 class Bank 
@@ -91,9 +102,22 @@ private:
     {
 
     }
+    string GetHash(string s)
+    {
+        hash<string> generator;
+        return to_string(generator(s));
+    }
     bool Login()
     {
-        return false;
+        string HashHadPassword = GetHash(tempPassword);
+
+        for (size_t i = 0; i < users.size(); i++)
+        {
+            if (users[i].GetLogin() == tempLogin and users[i].GetPassword() == HashHadPassword)
+            {
+                return true;
+            }
+        }
     }
     void RenderUI()
     {
@@ -118,6 +142,8 @@ private:
                 << "Enter your password below";
             break;
         case AppState::Menu:
+            cout << "========== Bank++ ==========" << endl
+                << "Welcome";
             break;
         case AppState::LoginFall:
             cout << "========== Bank++ ==========" << endl
@@ -125,10 +151,13 @@ private:
                 << "Enter any key to back to the login page";
             break;
         case AppState::LoginSuccess:
+            cout << "========== Bank++ ==========" << endl
+                << "You have been loged successfully";
             break;
         default:
             break;
         }
+        cout << "Enter \ 'exit' \ to exit"; 
     }
     void GetUserInput()
     {
@@ -155,7 +184,18 @@ private:
         else
         {
             getline(cin, input);
-        }  
+        } 
+        if (input == "exit")
+        {
+            if (currentUser.GetLogin() == "")
+            {
+                state = AppState::Enter;
+            }
+            else
+            {
+                state = AppState::Menu;
+            }
+        }
         switch (state)
         {
         case AppState::Enter:
@@ -195,6 +235,10 @@ private:
         case AppState::LoginFall:
             break;
         case AppState::LoginSuccess:
+            if (input == "")
+            {
+                state = AppState::Menu;
+            }
             break;
         
         default:
@@ -206,7 +250,6 @@ public:
     {
         state = AppState::Enter;
         LoadUsers();
-        Login();
     }
     void StartApp()
     {
@@ -230,4 +273,5 @@ int main()
     cout << tes;*/
 
     bank.StartApp();
+
 }
